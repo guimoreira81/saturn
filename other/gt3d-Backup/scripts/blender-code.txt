@@ -1,0 +1,42 @@
+import bpy
+import bmesh
+from math import floor
+
+colorOffset = [0, 0, 0]
+
+# Get the active object (ensure it's a mesh)
+obj = bpy.context.active_object
+file = open("\\home\\guilherme\\Desktop\\Javascript\\python-test\\vertices.json", "w")
+
+# Access the mesh data
+mesh = obj.data
+
+# Ensure the mesh is in edit mode to access updated geometry
+bpy.ops.object.mode_set(mode='OBJECT')
+
+#triangulate the mesh
+#bm = bmesh.from_edit_mesh(obj.data)
+#bmesh.ops.triangulate(bm, faces=bm.faces)
+
+precision = 100
+
+file.write("[")
+# Iterate through each polygon (triangle/face)
+i = 0
+for poly in mesh.polygons:
+    # Get the indices of the vertices for the current triangle
+    vertex_indices = poly.vertices[:]
+        
+    # Print the coordinates of the three vertices
+    vertices = [mesh.vertices[i].co for i in vertex_indices]
+    v1 = [floor(vertices[0][0]*precision)/precision, floor(vertices[0][1]*precision)/precision, floor(vertices[0][2]*precision)/precision]
+    v2 = [floor(vertices[1][0]*precision)/precision, floor(vertices[1][1]*precision)/precision, floor(vertices[1][2]*precision)/precision]
+    v3 = [floor(vertices[2][0]*precision)/precision, floor(vertices[2][1]*precision)/precision, floor(vertices[2][2]*precision)/precision]
+    if i!=0:
+        file.write("        ")
+    file.write(f"[[{v1[0]}, {v1[1]}, {v1[2]}], [{v2[0]}, {v2[1]}, {v2[2]}], [{v3[0]}, {v3[1]}, {v3[2]}], [{colorOffset[0]}, {colorOffset[1]}, {colorOffset[2]}]]")
+    if i < len(mesh.polygons)-1:
+        file.write(", \n")
+    i += 1
+file.write("]")
+
