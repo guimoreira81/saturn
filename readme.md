@@ -11,4 +11,4 @@ A personal project that tests 3d rendering using only characteres.
 - `arrow keys` for moving the camera.
 
 **Main `src` folder currently under development, GitHub pages running the Early Version**
-Page: https://guimoreira81.github.io/3d-ASCII-js/ (Early Version)
+Page: https://guimoreira81.github.io/saturn/ (Early Version)
