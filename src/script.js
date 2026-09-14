@@ -41,117 +41,97 @@ downButton.visible = touchScreen
 rightButton.visible = touchScreen
 leftButton.visible = touchScreen
 
+const walkSpeed = 5
 leftButton.pressed = () => {
-    let forward = game.camera.orientation.forward()
+    const right = game.camera.orientation.right().mul(walkSpeed*dt)
     game.camera.position = game.camera.position.add(forward)
 }
 rightButton.pressed = () => {
-    let forward = game.camera.orientation.forward()
+    const right = game.camera.orientation.right().mul(walkSpeed*dt)
     game.camera.position = game.camera.position.sub(forward)
 }
 upButton.pressed = () => {
-    let forward = game.camera.orientation.forward()
-    let right = forward.rotate(new vector3(0, 90, 0))
-    game.camera.position = game.camera.position.add(right)
+    const forward = game.camera.orientation.forward().mul(walkSpeed*dt)
+    game.camera.position = game.camera.position.sub(right)
 }
 downButton.pressed = () => {
-    let forward = game.camera.orientation.forward()
-    let right = forward.rotate(new vector3(0, 90, 0))
-    game.camera.position = game.camera.position.sub(right)
+    const forward = game.camera.orientation.forward().mul(walkSpeed*dt)
+    game.camera.position = game.camera.position.add(right)
 }
 
 flyUpButton.pressed = () => {
-    let forward = game.camera.orientation.forward()
-    let up = forward.rotate(new vector3(0, 0, 90))
+    const up = game.camera.orientation.up().mul(walkSpeed*dt)
     game.camera.position = game.camera.position.add(up)
 }
 flyDownButton.pressed = () => {
-    let forward = game.camera.orientation.forward()
-    let up = forward.rotate(new vector3(0, 0, 90))
+    const up = game.camera.orientation.up().mul(walkSpeed*dt)
     game.camera.position = game.camera.position.sub(up)
 }
 
 let timeScale = 1
 
-game.camera.position = new vector3(0, 0, 0)
-let Saturn = new Object("Saturn", new vector3(20, 20, 20).div(2), new vector3(0, 0, 0), Models.triangle.saturn)
+game.camera.setCursorVisibility(false)
+
+game.camera.position = new vector3(-1.6, 0.5, 2.6)
+game.camera.orientation = new vector3(10, 30, 0)
+let Saturn = new Object("Saturn", new vector3(1, 1, 1).div(2), new vector3(0, 0, 0), Models.triangle.sphere)
 Saturn.color = "rgb(255, 255, 50)"
 Saturn.char = "#"
 Saturn.orientation = new vector3(90, 0, 0)
 Saturn.rotationVelocity = new vector3(0, 0, 25)
 
-for (let i = 0; i < 500; i++){
+for (let i = 0; i < 200; i++){
     let asteroid = new Object("Asteroid", new vector3(1, 1, 1), new vector3(), Models.dot.dot)
     asteroid.char = "#"
     asteroid.renderMode = "dot"
     asteroid.orientation = new vector3(0, Math.random()*360, 0)
-    let l1d = 20
-    let l1s = 20
-    let l2s = 10
+    let l1d = 1
+    let l1s = 1
+    let l2s = 1
     let distance = l1d+Math.random()*l1s
     if (i > 400){
         distance = l1d+l1s+Math.random()*l2s
     }
-    //asteroid.position = asteroid.orientation.forward().mul(distance)
+    asteroid.position = asteroid.orientation.forward().mul(distance)
     asteroid.color = "rgb(150, 150, 150)"
-    asteroid.velocity = asteroid.orientation.forward().rotate(new vector3(0, -90, 0)).mul(10*0.55)
+    asteroid.velocity = asteroid.orientation.forward().rotate(new vector3(0, -90, 0)).mul(10*0.55*0.2)
 }
 
-document.addEventListener("keydown", function(event) {
-    const forward = game.camera.orientation.forward()
-    const right = game.camera.orientation.right()
-    const up = game.camera.orientation.up() //forward.rotate(new vector3(0, 0, 90))
-    /*console.clear()
-    console.log("forward (a+, d-): "+forward.text())
-    console.log("right (w+, s-): "+right.text())
-    console.log("up (z+, x-): "+up.text())*/
+game.updateFrame = (dt) => {
+    const forward = game.camera.orientation.forward().mul(walkSpeed*dt)
+    const right = game.camera.orientation.right().mul(walkSpeed*dt)
+    const up = game.camera.orientation.up().mul(walkSpeed*dt)
     
-    if (event.key == "w"){
+    if (game.keys["s"] || game["ArrowDown"]){
         game.camera.position = game.camera.position.add(forward)
     }
-    if (event.key == "s"){
+    if (game.keys["w"] || game["ArrowUp"]){
         game.camera.position = game.camera.position.add(forward.mul(-1))
     }
     
-    if (event.key == "a"){
-        game.camera.position = game.camera.position.add(right)
-    }
-    if (event.key == "d"){
+    if (game.keys["d"] || game["ArrowRight"]){
         game.camera.position = game.camera.position.add(right.mul(-1))
     }
-    if (event.key == "z"){
+    if (game.keys["a"] || game["ArrowLeft"]){
+        game.camera.position = game.camera.position.add(right)
+    }
+    if (game.keys["z"]){
         game.camera.position = game.camera.position.add(up)
     }
-    if (event.key == "x"){
+    if (game.keys["x"]){
         game.camera.position = game.camera.position.add(up.mul(-1))
     }
-
-    if (event.key == "ArrowUp"){
-        game.camera.orientation = game.camera.orientation.add(new vector3(-game.camera.sensibility, 0, 0))
-    }
-    if (event.key == "ArrowDown"){
-        game.camera.orientation = game.camera.orientation.add(new vector3(game.camera.sensibility, 0, 0))
-    }
-    if (event.key == "ArrowRight"){
-        game.camera.orientation = game.camera.orientation.add(new vector3(0, -game.camera.sensibility, 0))
-    }
-    if (event.key == "ArrowLeft"){
-        game.camera.orientation = game.camera.orientation.add(new vector3(0, game.camera.sensibility, 0))
-    }
-    
-    if (event.key == "q"){
+    /*if (game.keys[q]){
         game.camera.orientation = game.camera.orientation.add(new vector3(0, 0, game.camera.sensibility))
     }
-    if (event.key == "e"){
+    if (game.keys[e]){
         game.camera.orientation = game.camera.orientation.add(new vector3(0, 0, -game.camera.sensibility))
-    }
-})
-
-game.updateFrame = (dt) => {
+    }*/
+    game.camera.orientation = game.camera.orientation.add(new vector3(mouseDirection.y, -mouseDirection.x, 0).mul(game.camera.sensibility).mul(dt))
     game.objects.forEach((object, i) => {
         let acceleration = new vector3()
         if (object.name != "Saturn"){
-            if (object.position.z > -13 && object.position.z < 13 && object.position.x < 0){
+            if (object.position.z > -1 && object.position.z < 1 && object.position.x < 0){
                 object.color = "rgb(20, 20, 20)"
             }else if((object.position.z > -20 && object.position.z < 20 && object.position.x < 0)){''
                 object.color = "rgb(100, 100, 100)"
@@ -164,11 +144,11 @@ game.updateFrame = (dt) => {
         object.orientation = object.orientation.add(object.rotationVelocity.mul(dt))
         object.position = object.position.add(object.velocity.mul(dt))
     })
-    
 }
 
 game.drawFrame = () => {
-    screen.drawPixel("X", screen.size.div(2))
-    screen.drawText("camera.orientation = "+game.camera.orientation.text(), new vector2(1, 10))
+    //screen.drawPixel("X", screen.size.div(2))
+    /*screen.drawText("camera.orientation = "+game.camera.orientation.text(), new vector2(1, 10))
     screen.drawText("camera.orientation.forward() = "+game.camera.orientation.forward().text(), new vector2(1, 11))
+    screen.drawText("camera.position = "+game.camera.position.text(), new vector2(1, 12))*/
 }

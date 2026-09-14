@@ -95,120 +95,32 @@ class vector3{
         
         return vector
     }
-    forward2(){
-        //ERRO ESTÁ AQUI, CONFIRMADO!
-        //(POSSIVEL ERRO NA HORA DE CALCULAR A ROTAÇÃO "Z" DO DIRECTION) -> Averiguar
-        //FALHA NA HORA DE OLHAR PARA CIMA E ANDAR, FALHA NA HORA DE ANDAR PARA CIMA DEPOIS DE TER ROTACIONADO PARA O LADO, QUANDO SE ESTÁ NO LADO OPOSTO DO 0, 0, 0, O UP SE TORNA EM BAIXO
-        //X errado
-        //azimuth = x, elevation = y roll = z
-        //const x0 = Math.cos(angle.y)*Math.cos(angle.x)
-        //const y0 = Math.sin(angle.y)
-        //const z0 = Math.cos(angle.y)*Math.sin(angle.x)
-        
-        let angle = this.mul(Math.PI).div(180)
-
-        let d = new vector3(
-            Math.cos(angle.x)*Math.cos(angle.y), 
-            -Math.sin(angle.x),
-            Math.cos(angle.x)*Math.sin(angle.y)
-        ) //mudar X e Z pelo angulo Y
-        //return d
-
-        d = new vector3(0, Math.sin(angle.y)*Math.cos(angle.z), Math.cos(angle.y)*Math.cos(angle.z)) //mudar Y e Z pelo angulo X
-
-        const x0 = Math.cos(angle.x)*Math.cos(angle.y)
-        const y0 = Math.sin(angle.x)
-        const z0 = Math.cos(angle.x)*Math.sin(angle.y)
-
-        const cosR = Math.cos(angle.z)
-        const sinR = Math.sin(angle.z)
-
-        const x = x0*cosR-y0*sinR
-        const y = x0*sinR+y0*cosR
-        const z = z0
-
-        let direction = new vector3(x, y, z)
-        return direction //new vector3(1, 0, 0).rotate(angle)
-    }
-
     forward(){
         let angle = this.mul(Math.PI).div(180)
-        let d = new vector3(
-            Math.cos(angle.x)*Math.cos(angle.y), 
+
+        return new vector3(
+            Math.cos(angle.x)*Math.sin(angle.y),
             -Math.sin(angle.x),
-            Math.cos(angle.x)*Math.sin(angle.y)
-        ) //mudar X e Z pelo angulo Y
-        return new vector3()
-        //return d.rotate(new vector3(90, 0, 0))
+            -Math.cos(angle.x)*Math.cos(angle.y)
+        ).mul(-1)
     }
     right(){
         let angle = this.mul(Math.PI).div(180)
-        let d = new vector3(
-            -Math.sin(angle.x),
-            Math.cos(angle.x)*Math.cos(angle.y), 
-            Math.cos(angle.x)*Math.sin(angle.y)
-        ) //mudar X e Z pelo angulo Y
-        return d.rotate(new vector3(0, -90, 0))
+
+        return new vector3(
+            Math.cos(angle.y),
+            0,
+            Math.sin(angle.y)
+        )
     }
+
     up(){
         let angle = this.mul(Math.PI).div(180)
-        let d = new vector3(
-            Math.cos(angle.x)*Math.cos(angle.y), 
-            -Math.sin(angle.x),
-            Math.cos(angle.x)*Math.sin(angle.y)
-        ) //mudar X e Z pelo angulo Y
-        return d
-    }
 
-    /*forward() {
-    Versão z não altera x e y (rotacionar o angulo Y altera o X e o Z perfeitamente)
-        let angle = this.mul(Math.PI).div(180)
-
-        const x = Math.cos(angle.x)*Math.cos(angle.y)
-        const y = Math.sin(angle.x)
-        const z = Math.cos(angle.x)*Math.sin(angle.y)
-
-        let direction = new vector3(x, y, z)
-        return direction //new vector3(1, 0, 0).rotate(angle)
-
-    Versão antiga
-        ----------
-        let angle = this.mul(Math.PI).div(180)
-
-        const x0 = Math.cos(angle.x)*Math.cos(angle.y)
-        const y0 = Math.sin(angle.x)
-        const z0 = Math.cos(angle.x)*Math.sin(angle.y)
-
-        const cosR = Math.cos(angle.z)
-        const sinR = Math.sin(angle.z)
-
-        const x = x0*cosR-y0*sinR
-        const y = x0*sinR+y0*cosR
-        const z = z0
-
-        let direction = new vector3(x, y, z)
-        return direction //new vector3(1, 0, 0).rotate(angle)
-
-        ---------
-    COMPLETAMENTE ERRADO
-        const [rx, ry, rz] = [this.x, this.y, this.z]
-      
-        // Calcula seno e cosseno para cada ângulo
-        const cx = Math.cos(rx), sx = Math.sin(rx)
-        const cy = Math.cos(ry), sy = Math.sin(ry)
-        const cz = Math.cos(rz), sz = Math.sin(rz)
-      
-        // Matriz de rotação composta (Z * Y * X)
-        const dir = [
-          cy * sz * sx + sy * cz,
-          sy * sz * sx - cy * cz,
-          sz * cx
-        ]
-      
-        // Normaliza o vetor de direção
-        const length = Math.hypot(dir[0], dir[1], dir[2])
-        let resultado = dir.map(v => v / length)
-        return new vector3(resultado[0], resultado[1], resultado[2])
-    }*/
-      
+        return new vector3(
+            Math.sin(angle.x)*Math.sin(angle.y),
+            Math.cos(angle.x),
+            -Math.sin(angle.x)*Math.cos(angle.y)
+        )
+    }      
 }

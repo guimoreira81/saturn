@@ -11,11 +11,23 @@ let game = {
         "position": new vector3(0, 0, 0),
         "speed": 5,
         "orientation": new vector3(0, 0, 0),
-        "sensibility": 5
+        "sensibility": 150
     },
     "render": {
 
-    }
+    },
+    "keys": [],
+}
+
+document.addEventListener("keydown", (event) => {
+    game.keys[event.key] = true
+})
+document.addEventListener("keyup", (event) => {
+    game.keys[event.key] = false
+})
+
+game.camera.setCursorVisibility = (value) => {
+    document.body.style.cursor = value ? "default" : "none"
 }
 
 game.camera.worldPositionToScreen = (vector) => {
@@ -154,11 +166,15 @@ class Button{
 }
 const touchScreen = 'ontouchstart' in window || navigator.msMaxTouchPoints || false
 
+let mouseDirection = new vector2()
 let mousePosition = new vector2()
 let mouseDown = false
-
+let mouseMovementPosition = new vector2()
+let lastTimeMouseMoved = 0
 window.addEventListener("pointermove", (event) => {
+    lastTimeMouseMoved = Date.now()
     mousePosition = new vector2(event.clientX/window.innerWidth, event.clientY/window.innerHeight).mul(screen.size)
+    mouseMovementPosition = new vector2(event.movementX, event.movementY)
 })
 window.addEventListener("pointerup", (event) => {
     mouseDown = false
@@ -198,6 +214,11 @@ function sort(renderingQueue){
     return newArray
 }
 
+// bloquar o movimento do cursor
+canvas.addEventListener('click', () => {
+    canvas.requestPointerLock();
+});
+let lastMouseMovementPosition = new vector2()
 
 const FPS = 12
 const wait = time => new Promise(res => setTimeout(res, time))
@@ -205,6 +226,11 @@ async function _load(){
     while (true){
         const dt = 1/FPS
         game.updateFrame(dt)
+
+        mouseDirection = mouseMovementPosition.unit()
+        if (isNaN(mouseDirection.x) || isNaN(mouseDirection.y)|| Date.now()-lastTimeMouseMoved > 100){
+            mouseDirection = new vector2()
+        }
 
         screen.fill(" ", "rgb(100, 100, 100)")
         renderingQueue = []
