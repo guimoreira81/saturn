@@ -102,17 +102,17 @@ game.updateFrame = (dt) => {
     const right = game.camera.orientation.right().mul(walkSpeed*dt)
     const up = game.camera.orientation.up().mul(walkSpeed*dt)
     
-    if (game.keys["s"] || game["ArrowDown"]){
+    if (game.keys["s"] || game.keys["ArrowDown"]){
         game.camera.position = game.camera.position.add(forward)
     }
-    if (game.keys["w"] || game["ArrowUp"]){
+    if (game.keys["w"] || game.keys["ArrowUp"]){
         game.camera.position = game.camera.position.add(forward.mul(-1))
     }
     
-    if (game.keys["d"] || game["ArrowRight"]){
+    if (game.keys["d"] || game.keys["ArrowRight"]){
         game.camera.position = game.camera.position.add(right.mul(-1))
     }
-    if (game.keys["a"] || game["ArrowLeft"]){
+    if (game.keys["a"] || game.keys["ArrowLeft"]){
         game.camera.position = game.camera.position.add(right)
     }
     if (game.keys["z"]){
